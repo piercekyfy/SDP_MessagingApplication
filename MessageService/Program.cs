@@ -1,4 +1,5 @@
 using MessageService.Repositories;
+using MessageService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSingleton<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IMessagesService, MessagesService>();
 
 var app = builder.Build();
 

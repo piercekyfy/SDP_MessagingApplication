@@ -1,5 +1,6 @@
 ﻿using MessageService.Models;
 using MessageService.Repositories;
+using MessageService.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MessageService.Controllers
@@ -8,23 +9,23 @@ namespace MessageService.Controllers
     [Route("api/v1/messages")]
     public class MessagesController : ControllerBase
     {
-        private readonly IMessageRepository repository;
+        private readonly IMessagesService service;
 
-        public MessagesController(IMessageRepository repository)
+        public MessagesController(IMessagesService service)
         {
-            this.repository = repository;
+            this.service = service;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            return Ok(await repository.GetAllAsync());
+            return Ok(await service.GetAllAsync());
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
-            var message = await repository.GetByIdAsync(id);
+            var message = await service.GetByIdAsync(id);
             if (message == null) return NotFound();
             return Ok(message);
         }
@@ -32,7 +33,7 @@ namespace MessageService.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] Message message)
         {
-            await repository.CreateAsync(message);
+            await service.CreateAsync(message);
             return CreatedAtAction(nameof(Get), new { id = message.Id }, message);
         }
     }

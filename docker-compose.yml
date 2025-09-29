@@ -5,19 +5,32 @@ services:
             dockerfile: ./DockerFile
         container_name: message-service
         ports:
-            - "5000:5000"
-            - "5001:5001"
+            - 5000:5000
+            - 5001:5001
         depends_on: 
-            - "mongo"
+            - mongo
         environment:
-            ASPNETCORE_URLS: "http://+:5000;"
+            ASPNETCORE_URLS: http://+:5000;
     mongo:
         image: mongo:8.0-noble
         container_name: mongo
         ports:
-            - "27017:27017"
+            - 27017:27017
         volumes:
             - mongo-data:/data/db
+    rabbitmq:
+        image: rabbitmq:4.2-rc-management-alpine
+        container_name: rabbitmq
+        ports:
+            - 5672:5672
+            - 15672:15672
+        environment:
+            RABBITMQ_DEFAULT_USER: admin
+            RABBITMQ_DEFAULT_PASS: admin
 
 volumes:
     mongo-data:
+    
+networks:
+    default:
+        driver: bridge
