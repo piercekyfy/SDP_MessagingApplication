@@ -3,33 +3,55 @@ services:
         build:
             context: ./MessageService
             dockerfile: ./DockerFile
-        container_name: message-service
+        container_name: "message-service"
         ports:
             - 5000:5000
-            - 5001:5001
         depends_on: 
-            - mongo
+            - message-service-messages-db
         environment:
             ASPNETCORE_URLS: http://+:5000;
-    mongo:
+    user-service: 
+        build:
+            context: ./UserService
+            dockerfile: ./DockerFile
+        container_name: "user-service"
+        ports:
+            - 5001:5001
+        depends_on: 
+            - user-service-users-db
+        environment:
+            ASPNETCORE_URLS: http://+:5001;
+    message-service-messages-db:
         image: mongo:8.0-noble
-        container_name: mongo
+        container_name: "message-messages-db"
         ports:
             - 27017:27017
         volumes:
-            - mongo-data:/data/db
-    rabbitmq:
+            - message-messages-data:/data/db
+    user-service-users-db:
+        image: postgres:18.0-alpine3.22
+        container_name: "user-users-db"
+        ports:
+            - 5432:5432
+        volumes:
+            - user-users-data:/var/lib/postgresql
+        environment:
+            POSTGRES_DB: users
+        env_file:
+            - .env
+    message-broker:
         image: rabbitmq:4.2-rc-management-alpine
-        container_name: rabbitmq
+        container_name: "message-broker"
         ports:
             - 5672:5672
             - 15672:15672
-        environment:
-            RABBITMQ_DEFAULT_USER: admin
-            RABBITMQ_DEFAULT_PASS: admin
+        env_file:
+            - .env
 
 volumes:
-    mongo-data:
+    message-messages-data:
+    user-users-data:
+
     
 networks:
     default:

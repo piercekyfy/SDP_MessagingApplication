@@ -27,7 +27,6 @@ namespace MessageService.Repositories
 
         public async Task CreateAsync(Message message)
         {
-            message.Timestamp = DateTime.UtcNow;
             await collection.InsertOneAsync(message);
         }
 

@@ -24,6 +24,7 @@ namespace MessageService.Services
 
         public async Task CreateAsync(Message message)
         {
+            message.Timestamp = DateTime.UtcNow;
             await repository.CreateAsync(message);
         }
     }
