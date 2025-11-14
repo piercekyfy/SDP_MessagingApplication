@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Shared.Infastructure.Messaging;
+using Shared.Messaging.Infastructure;
 using UserService.Models;
 using UserService.Services;
 

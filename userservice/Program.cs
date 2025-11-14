@@ -1,4 +1,4 @@
-using Shared.Infastructure.Messaging;
+using Shared.Messaging.Infastructure;
 using UserService.Contexts;
 using UserService.Repository;
 using UserService.Services;
