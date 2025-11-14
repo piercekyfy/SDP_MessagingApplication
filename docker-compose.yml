@@ -12,8 +12,8 @@ services:
             ASPNETCORE_URLS: http://+:5000;
     user-service: 
         build:
-            context: ./UserService
-            dockerfile: ./DockerFile
+            context: ./
+            dockerfile: ./UserService.DockerFile
         container_name: "user-service"
         ports:
             - 5001:5001
@@ -45,13 +45,17 @@ services:
         ports:
             - 5672:5672
             - 15672:15672
+        volumes:
+            - message-broker-lib:/var/lib/rabbitmq/
+            - message-broker-log:/var/log/rabbitmq/
         env_file:
             - .env
 
 volumes:
     message-messages-data:
     user-users-data:
-
+    message-broker-lib:
+    message-broker-log:
     
 networks:
     default:

@@ -1,3 +1,4 @@
+using Shared.Infastructure.Messaging;
 using UserService.Contexts;
 using UserService.Repository;
 using UserService.Services;
@@ -14,6 +15,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<UsersContext>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUsersService, UsersService>();
+
+builder.Services.AddSingleton<IMessageBrokerConnection, RabbitMQConnection>();
+builder.Services.AddHostedService<MessageBrokerConnectorService>();
 
 var app = builder.Build();
 
