@@ -1,6 +1,6 @@
-﻿namespace UserService.Models.Messaging
+﻿namespace Shared.Messaging.Models.User
 {
-    public class UserCreated
+    public class UserCreated : MessageModel
     {
         public string UniqueName { get; set; }
 

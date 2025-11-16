@@ -12,12 +12,15 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// Repository Services (Data-stores)
 builder.Services.AddDbContext<UsersContext>();
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 
+// Exchange Services (Messaging)
 builder.Services.AddSingleton<IMessageBrokerConnection, RabbitMQConnection>();
 builder.Services.AddHostedService<MessageBrokerConnectorService>();
+builder.Services.AddScoped<IUsersExchangeService, UsersExchangeService>();
 
 var app = builder.Build();
 

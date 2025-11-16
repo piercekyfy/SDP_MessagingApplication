@@ -10,10 +10,12 @@ namespace UserService.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUsersService usersService;
+        private readonly IUsersExchangeService usersExchangeService;
 
-        public UsersController(IUsersService usersService)
+        public UsersController(IUsersService usersService, IUsersExchangeService usersExchangeService)
         {
             this.usersService = usersService;
+            this.usersExchangeService = usersExchangeService;
         }
 
         [HttpGet]
@@ -32,6 +34,7 @@ namespace UserService.Controllers
         public async Task<IActionResult> Post([FromBody] User user)
         {
             await usersService.CreateAsync(user);
+            await usersExchangeService.PublishUserCreated(user);
             return CreatedAtAction(nameof(Get), new {uniqueName = user.UniqueName}, user);
         }
     }

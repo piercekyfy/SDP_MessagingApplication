@@ -1,62 +1,46 @@
 services:
-    message-service: 
-        build:
-            context: ./MessageService
-            dockerfile: ./DockerFile
-        container_name: "message-service"
-        ports:
-            - 5000:5000
-        depends_on: 
-            - message-service-messages-db
-        environment:
-            ASPNETCORE_URLS: http://+:5000;
-    user-service: 
-        build:
-            context: ./
-            dockerfile: ./UserService.DockerFile
-        container_name: "user-service"
-        ports:
-            - 5001:5001
-        depends_on: 
-            - user-service-users-db
-        environment:
-            ASPNETCORE_URLS: http://+:5001;
-    message-service-messages-db:
-        image: mongo:8.0-noble
-        container_name: "message-messages-db"
-        ports:
-            - 27017:27017
-        volumes:
-            - message-messages-data:/data/db
-    user-service-users-db:
-        image: postgres:18.0-alpine3.22
-        container_name: "user-users-db"
-        ports:
-            - 5432:5432
-        volumes:
-            - user-users-data:/var/lib/postgresql
-        environment:
-            POSTGRES_DB: users
-        env_file:
-            - .env
-    message-broker:
-        image: rabbitmq:4.2-rc-management-alpine
-        container_name: "message-broker"
-        ports:
-            - 5672:5672
-            - 15672:15672
-        volumes:
-            - message-broker-lib:/var/lib/rabbitmq/
-            - message-broker-log:/var/log/rabbitmq/
-        env_file:
-            - .env
+  user-service:
+    image: ${DOCKER_REGISTRY-}userservice
+    build:
+      context: .
+      dockerfile: MessagingApplication/UserService/Dockerfile
+    depends_on:
+      - user-db
+  user-db:
+    image: postgres:18.0-alpine3.22
+    container_name: "user-users-db"
+    ports:
+        - 5432:5432
+    volumes:
+        - user-db-data:/var/lib/postgresql
+    environment:
+        POSTGRES_DB: users
+  message-service:
+    image: ${DOCKER_REGISTRY-}messageservice
+    build:
+      context: .
+      dockerfile: MessagingApplication/MessageService/Dockerfile
+    depends_on:
+      - message-db
+  message-db:
+    image: mongo:8.0-noble
+    container_name: "message-messages-db"
+    ports:
+        - 27017:27017
+    volumes:
+        - message-db-data:/data/db
+  rabbitmq:
+    image: rabbitmq:4.2-rc-management-alpine
+    container_name: "message-broker"
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - rabbitmq-lib-data:/var/lib/rabbitmq/
+        - rabbitmq-log-data:/var/log/rabbitmq/
 
 volumes:
-    message-messages-data:
-    user-users-data:
-    message-broker-lib:
-    message-broker-log:
-    
-networks:
-    default:
-        driver: bridge
+    message-db-data:
+    user-db-data:
+    rabbitmq-lib-data:
+    rabbitmq-log-data:

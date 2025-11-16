@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
+using Shared.Messaging.Models;
 
 namespace Shared.Messaging.Infastructure
 {
@@ -20,8 +21,6 @@ namespace Shared.Messaging.Infastructure
         {
             connection = await connectionFactory.CreateConnectionAsync();
             channel = await connection.CreateChannelAsync();
-
-            
         }
 
         public async Task DeclareExchange(string exchange, string type)
@@ -29,15 +28,21 @@ namespace Shared.Messaging.Infastructure
             if (channel == null)
                 throw new InvalidOperationException("Cannot declare exchange, RabbitMQ is not connected.");
 
-            await channel.ExchangeDeclareAsync(exchange, type);
+            await channel.ExchangeDeclareAsync(exchange, type, durable: true, autoDelete: false);
         }
 
-        public async Task BasicPublish(string exchange, string routingKey, ReadOnlyMemory<byte> body, CancellationToken ct = default)
+        public async Task BasicPublish(string exchange, string routingKey, MessageModel message, DeliveryMode deliveryMode = DeliveryMode.Persistent, CancellationToken ct = default)
         {
             if (channel == null)
                 throw new InvalidOperationException("Cannot publish, RabbitMQ is not connected.");
 
-            await channel.BasicPublishAsync(exchange, routingKey, body, ct);
+            var props = new BasicProperties()
+            {
+                ContentType = "application/json",
+                DeliveryMode = deliveryMode == DeliveryMode.Transient ? DeliveryModes.Transient : DeliveryModes.Persistent
+            };
+
+            await channel.BasicPublishAsync(exchange, routingKey, message.AsJsonBytes(), ct);
         }
     }
 }

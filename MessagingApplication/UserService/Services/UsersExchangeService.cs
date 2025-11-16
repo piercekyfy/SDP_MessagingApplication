@@ -2,13 +2,13 @@
 
 using UserService.Models;
 using Shared.Messaging.Infastructure;
-using UserService.Models.Messaging;
+using Shared.Messaging.Models.User;
 using System.Text;
-using Microsoft.AspNetCore.SignalR;
+
 
 namespace UserService.Services
 {
-    public class UsersExchangeService // TODO: Create interface
+    public class UsersExchangeService : IUsersExchangeService
     {
         private readonly IMessageBrokerConnection connection;
         private readonly string exchange;
@@ -20,26 +20,26 @@ namespace UserService.Services
 
             string GetConfigStringOrThrow(IConfiguration configuration, string key)
             {
-                if (string.IsNullOrEmpty(configuration[key]))
+                try
+                {
+                    if (string.IsNullOrEmpty(configuration[key]))
+                        throw new ArgumentException($"Exchange Configuration {key} must be specified.");
+                } catch (IndexOutOfRangeException)
+                {
                     throw new ArgumentException($"Exchange Configuration {key} must be specified.");
-                return configuration["Exchange:Users:Name"] ?? "";
+                }
+                return configuration[key] ?? "";
             }
 
-            exchange = GetConfigStringOrThrow(configuration, "Users:Name");
-            createdRoute = GetConfigStringOrThrow(configuration, "Users:Routes:Created");
+            exchange = GetConfigStringOrThrow(configuration, "Exchanges:Users:Name");
+            createdRoute = GetConfigStringOrThrow(configuration, "Exchanges:Users:Routes:Created");
         }
 
         public async Task PublishUserCreated(User user)
         {
             await connection.DeclareExchange(exchange, "topic");
 
-            var body = Encoding.UTF8.GetBytes(
-                JsonSerializer.Serialize(
-                    new UserCreated(user.UniqueName)
-                    )
-                );
-
-            await connection.BasicPublish(exchange, createdRoute, body);
+            await connection.BasicPublish(exchange, createdRoute, new UserCreated(user.UniqueName));
         }
     }
 }
