@@ -11,7 +11,7 @@ namespace MessageService.Repositories
         {
             var client = new MongoClient(configuration["MongoDB:ConnectionString"]);
             var database = client.GetDatabase(configuration["MongoDB:Database"]);
-            collection = database.GetCollection<Message>("Messages");
+            collection = database.GetCollection<Message>(configuration["Collections:Messages"]);
         }
 
         

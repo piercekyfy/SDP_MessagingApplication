@@ -5,9 +5,9 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "MessagingApplication\Shared\Shared.csproj", "{BD8E65A8-7ADF-C04D-2E80-AEA9CC215E16}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "user-service", "MessagingApplication\UserService\user-service.csproj", "{82ECE8CD-1267-14AF-83C9-259A155ECE28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService", "MessagingApplication\UserService\UserService.csproj", "{82ECE8CD-1267-14AF-83C9-259A155ECE28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "message-service", "MessagingApplication\MessageService\message-service.csproj", "{80BDC680-8C63-2A06-AEE9-D1BB4CAF91A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageService", "MessagingApplication\MessageService\MessageService.csproj", "{80BDC680-8C63-2A06-AEE9-D1BB4CAF91A1}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject

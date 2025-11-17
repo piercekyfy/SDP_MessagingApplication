@@ -10,13 +10,14 @@ namespace UserService.Services
 {
     public class UsersExchangeService : IUsersExchangeService
     {
-        private readonly IMessageBrokerConnection connection;
+        private readonly IMessageBrokerChannel channel;
         private readonly string exchange;
+        private readonly string createdType;
         private readonly string createdRoute;
 
-        public UsersExchangeService(IMessageBrokerConnection connection, IConfiguration configuration) 
+        public UsersExchangeService(IMessageBrokerChannel connection, IConfiguration configuration) 
         { 
-            this.connection = connection;
+            this.channel = connection;
 
             string GetConfigStringOrThrow(IConfiguration configuration, string key)
             {
@@ -32,14 +33,15 @@ namespace UserService.Services
             }
 
             exchange = GetConfigStringOrThrow(configuration, "Exchanges:Users:Name");
-            createdRoute = GetConfigStringOrThrow(configuration, "Exchanges:Users:Routes:Created");
+            createdType = GetConfigStringOrThrow(configuration, "Exchanges:Users:Events:Created:Name");
+            createdRoute = GetConfigStringOrThrow(configuration, "Exchanges:Users:Events:Created:Route");
         }
 
         public async Task PublishUserCreated(User user)
         {
-            await connection.DeclareExchange(exchange, "topic");
+            await channel.DeclareExchange(exchange, "topic");
 
-            await connection.BasicPublish(exchange, createdRoute, new UserCreated(user.UniqueName));
+            await channel.BasicPublish(exchange, createdRoute, new UserCreated(user.UniqueName), createdType);
         }
     }
 }

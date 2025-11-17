@@ -16,7 +16,7 @@ namespace Shared.Messaging.Models
         }
         public virtual string JsonSerialize()
         {
-            return JsonSerializer.Serialize(this);     
+            return JsonSerializer.Serialize(this, GetType()); // Serialize as runtime (child) type not MessageModel
         }
     }
 }

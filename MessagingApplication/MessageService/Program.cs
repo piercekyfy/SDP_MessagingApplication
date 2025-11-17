@@ -1,5 +1,7 @@
+using MessageService.Messaging.Consumers;
 using MessageService.Repositories;
 using MessageService.Services;
+using Shared.Messaging.Infastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,14 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSingleton<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IMessagesService, MessagesService>();
+
+builder.Services.AddSingleton<IUserRepository, UserRepository>();
+
+// Exchange Services (Messaging)
+
+builder.Services.AddSingleton<IMessageBrokerConnection, RabbitMQConnection>();
+builder.Services.AddTransient<IMessageBrokerChannel, MessageBrokerChannel>();
+builder.Services.AddHostedService<UsersConsumer>();
 
 var app = builder.Build();
 

@@ -19,7 +19,7 @@ builder.Services.AddScoped<IUsersService, UsersService>();
 
 // Exchange Services (Messaging)
 builder.Services.AddSingleton<IMessageBrokerConnection, RabbitMQConnection>();
-builder.Services.AddHostedService<MessageBrokerConnectorService>();
+builder.Services.AddTransient<IMessageBrokerChannel, MessageBrokerChannel>();
 builder.Services.AddScoped<IUsersExchangeService, UsersExchangeService>();
 
 var app = builder.Build();
