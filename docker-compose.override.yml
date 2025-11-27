@@ -25,6 +25,11 @@ services:
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
+  message-db:
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+      - MONGO_INITDB_DATABASE=messageservicedb
   rabbitmq:
     environment:
       - RABBITMQ_DEFAULT_USER=admin

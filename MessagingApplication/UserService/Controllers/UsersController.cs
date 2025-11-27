@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Exceptions;
+using UserService.DTOs;
+using UserService.Exceptions;
 using UserService.Models;
 using UserService.Services;
 
@@ -10,12 +13,10 @@ namespace UserService.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUsersService usersService;
-        private readonly IUsersExchangeService usersExchangeService;
 
-        public UsersController(IUsersService usersService, IUsersExchangeService usersExchangeService)
+        public UsersController(IUsersService usersService)
         {
             this.usersService = usersService;
-            this.usersExchangeService = usersExchangeService;
         }
 
         [HttpGet]
@@ -31,11 +32,33 @@ namespace UserService.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] User user)
+        public async Task<IActionResult> CreateOne([FromBody] User user)
         {
             await usersService.CreateAsync(user);
-            await usersExchangeService.PublishUserCreated(user);
+            
             return CreatedAtAction(nameof(Get), new {uniqueName = user.UniqueName}, user);
+        }
+
+        [HttpPatch("{uniqueName}")]
+        public async Task<IActionResult> UpdateOne(string uniqueName, [FromBody] UpdateUserRequest request)
+        {
+            User? updated;
+            try
+            {
+                updated = await usersService.UpdateAsync(uniqueName, request);
+            } catch (UserNotFoundException)
+            {
+                return NotFound(uniqueName);
+            } catch (DomainException ex)
+            {
+                return BadRequest(ex.DisplayMessage);
+            } catch (Exception)
+            {
+                throw;
+                return StatusCode(500);
+            }
+
+            return Ok(updated);
         }
     }
 }

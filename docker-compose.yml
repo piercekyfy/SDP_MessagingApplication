@@ -6,6 +6,7 @@ services:
       dockerfile: MessagingApplication/UserService/Dockerfile
     depends_on:
       - user-db
+      - rabbitmq
   user-db:
     image: postgres:18.0-alpine3.22
     container_name: "user-users-db"
@@ -22,6 +23,7 @@ services:
       dockerfile: MessagingApplication/MessageService/Dockerfile
     depends_on:
       - message-db
+      - rabbitmq
   message-db:
     image: mongo:8.0-noble
     container_name: "message-messages-db"

@@ -7,5 +7,6 @@ namespace UserService.Repository
         Task<List<User>> GetAllAsync();
         Task<User?> GetByUniqueNameAsync(string uniqueName);
         Task CreateAsync(User user);
+        Task UpdateAsync(User user);
     }
 }

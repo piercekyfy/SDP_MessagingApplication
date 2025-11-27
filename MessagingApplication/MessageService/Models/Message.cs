@@ -2,13 +2,16 @@
 {
     public class Message
     {
-        public string Id { get; set; }
-        public DateTime Timestamp { get; set; }
+        public string? Id { get; set; }
+        public string SenderUniqueName { get; set; }
+        public string ChatId { get; set; }
+        public DateTimeOffset Timestamp { get; set; }
         public string Content { get; set; }
 
-        public Message(string id, string content)
+        public Message(string senderUniqueName, string chatId, string content)
         {
-            Id = id;
+            SenderUniqueName = senderUniqueName;
+            ChatId = chatId;
             Content = content;
         }
     }

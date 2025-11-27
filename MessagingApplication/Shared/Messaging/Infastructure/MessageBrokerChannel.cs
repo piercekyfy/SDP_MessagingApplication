@@ -48,7 +48,7 @@ namespace Shared.Messaging.Infastructure
             await ch.BasicConsumeAsync(queue, autoAck, consumer, ct);
         }
 
-        public async Task BasicPublish(string exchange, string routingKey, MessageModel message, string type, bool mandatory = false, DeliveryMode deliveryMode = DeliveryMode.Persistent, CancellationToken ct = default)
+        public async Task BasicPublish(string exchange, string routingKey, MessagingModel message, string type, bool mandatory = false, DeliveryMode deliveryMode = DeliveryMode.Persistent, CancellationToken ct = default)
         {
             var ch = await GetChannel();
 

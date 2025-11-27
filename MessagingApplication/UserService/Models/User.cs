@@ -1,6 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace UserService.Models
 {
     [PrimaryKey(nameof(UniqueName))]
@@ -15,13 +13,14 @@ namespace UserService.Models
                 uniqueName = value.ToLower();
             }
         }
-
+        public string DisplayName { get; set; }
         public string Email { get; set; }
-        public DateTime DateCreated { get; set; }
+        public DateTimeOffset DateCreated { get; set; }
 
-        public User(string uniqueName, string email, DateTime dateCreated)
+        public User(string uniqueName, string displayName, string email, DateTimeOffset dateCreated)
         {
             UniqueName = uniqueName;
+            DisplayName = displayName;
             Email = email;
             DateCreated = dateCreated;
         }

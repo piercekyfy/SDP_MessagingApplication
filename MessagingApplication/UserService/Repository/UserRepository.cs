@@ -13,12 +13,6 @@ namespace UserService.Repository
             this.context = context;
         }
 
-        public async Task CreateAsync(User user)
-        {
-            await context.Users.AddAsync(user);
-            await context.SaveChangesAsync();
-        }
-
         public async Task<List<User>> GetAllAsync()
         {
             return await context.Users.ToListAsync();
@@ -27,6 +21,19 @@ namespace UserService.Repository
         public async Task<User?> GetByUniqueNameAsync(string uniqueName)
         {
             return await context.Users.FirstOrDefaultAsync(user => user.UniqueName == uniqueName.ToLower());
+        }
+
+        public async Task CreateAsync(User user)
+        {
+            user.DateCreated = DateTime.UtcNow;
+            await context.Users.AddAsync(user);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync(User user)
+        {
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
         }
     }
 }

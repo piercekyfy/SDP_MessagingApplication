@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using UserService.Configurations;
 using UserService.Models;
 
 namespace UserService.Contexts
@@ -9,9 +11,9 @@ namespace UserService.Contexts
 
         private string? connectionString;
 
-        public UsersContext(IConfiguration configuration)
+        public UsersContext(IOptions<PostgresSQLConfiguration> configuration)
         {
-            connectionString = configuration["PostgresSQL:ConnectionString"];
+            connectionString = configuration.Value.ConnectionString;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

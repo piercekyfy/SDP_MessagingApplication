@@ -1,9 +1,18 @@
+using MessageService.Configurations;
 using MessageService.Messaging.Consumers;
 using MessageService.Repositories;
 using MessageService.Services;
+using Shared.Configurations;
 using Shared.Messaging.Infastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Register Configurations
+
+builder.Services.Configure<MongoDBConfiguration>(builder.Configuration.GetSection("MongoDB"));
+builder.Services.Configure<RabbitMQConfiguration>(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.Configure<UsersQueueConfiguration>(builder.Configuration.GetSection("Queues:Users"));
+
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -14,6 +23,9 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSingleton<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<IMessagesService, MessagesService>();
+
+builder.Services.AddSingleton<IChatRepository, ChatRepository>();
+builder.Services.AddScoped<IChatsService, ChatsService>();
 
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
+using Shared.Configurations;
 using Shared.Messaging.Models;
 
 namespace Shared.Messaging.Infastructure
@@ -11,9 +13,9 @@ namespace Shared.Messaging.Infastructure
 
         private IConnection? connection;
 
-        public RabbitMQConnection(IConfiguration configuration)
+        public RabbitMQConnection(IOptions<RabbitMQConfiguration> configuration)
         {
-            connectionFactory = new ConnectionFactory() { Uri = new Uri(configuration["RabbitMQ:ConnectionString"] ?? "") };
+            connectionFactory = new ConnectionFactory() { Uri = new Uri(configuration.Value.ConnectionString ?? "") };
         }
 
         public async Task<IChannel> GetChannel()

@@ -1,9 +1,17 @@
+using Shared.Configurations;
 using Shared.Messaging.Infastructure;
+using UserService.Configurations;
 using UserService.Contexts;
 using UserService.Repository;
 using UserService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Register Configurations
+
+builder.Services.Configure<PostgresSQLConfiguration>(builder.Configuration.GetSection("PostgresSQL"));
+builder.Services.Configure<RabbitMQConfiguration>(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.Configure<UsersExchangeConfiguration>(builder.Configuration.GetSection("Exchanges:Users"));
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -20,7 +28,7 @@ builder.Services.AddScoped<IUsersService, UsersService>();
 // Exchange Services (Messaging)
 builder.Services.AddSingleton<IMessageBrokerConnection, RabbitMQConnection>();
 builder.Services.AddTransient<IMessageBrokerChannel, MessageBrokerChannel>();
-builder.Services.AddScoped<IUsersExchangeService, UsersExchangeService>();
+builder.Services.AddScoped<IUserExchangeService, UserExchangeService>();
 
 var app = builder.Build();
 

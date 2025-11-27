@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Shared.Messaging.Models
 {
-    public abstract class MessageModel
+    public abstract class MessagingModel
     {
         public virtual Memory<byte> AsJsonBytes()
         {
