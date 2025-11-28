@@ -3,7 +3,7 @@ namespace MessageService.Models
 {
     public class Chat
     {
-        public string? Id { get; set; }
+        public string Id { get; set; } = default!;
         public string Name { get; set; }
         public List<ChatUser> Users { get; set; } = new List<ChatUser>();
         public DateTimeOffset CreatedOn { get; set; }

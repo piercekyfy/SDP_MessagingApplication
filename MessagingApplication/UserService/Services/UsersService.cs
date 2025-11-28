@@ -29,9 +29,9 @@ namespace UserService.Services
 
         public async Task CreateAsync(User user)
         {
-            user.DateCreated = DateTime.UtcNow;
+            user.CreatedAt = DateTime.UtcNow;
             await userRepository.CreateAsync(user);
-            await userExchangeService.PublishUserCreatedAsync(user);
+            await userExchangeService.PublishCreatedAsync(user);
         }
 
         public async Task<User> UpdateAsync(string uniqueName, UpdateUserRequest request)
@@ -49,8 +49,18 @@ namespace UserService.Services
                 throw new DomainException("Email Length <= 3.") { DisplayMessage = "User.Email length must be greater than or equal to 3." };
 
             await userRepository.UpdateAsync(user);
-            await userExchangeService.PublishUserUpdatedAsync(user);
+            await userExchangeService.PublishUpdatedAsync(user);
             return user;
+        }
+
+        public async Task DeleteAsync(string uniqueName)
+        {
+            User? user = await userRepository.GetByUniqueNameAsync(uniqueName);
+            if (user == null)
+                throw new UserNotFoundException(uniqueName);
+
+            await userRepository.DeleteAsync(user);
+            await userExchangeService.PublishDeletedAsync(user);
         }
     }
 }

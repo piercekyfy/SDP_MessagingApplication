@@ -9,5 +9,6 @@ namespace UserService.Services
         Task<User?> GetByUniqueNameAsync(string uniqueName);
         Task CreateAsync(User user);
         Task<User> UpdateAsync(string uniqueName, UpdateUserRequest request);
+        Task DeleteAsync(string uniqueName);
     }
 }

@@ -27,9 +27,7 @@ namespace MessageService.Repositories
             var connectionString = new MongoUrl(configuration.Value.ConnectionString);
             var client = new MongoClient(connectionString);
             var database = client.GetDatabase(connectionString.DatabaseName);
-            collection = database.GetCollection<Chat>(configuration.Value.Collections.Chats);
-
-            
+            collection = database.GetCollection<Chat>(configuration.Value.Collections.Chats);      
         }
 
         public async Task<List<Chat>> GetAllAsync()
@@ -39,7 +37,7 @@ namespace MessageService.Repositories
 
         public async Task<Chat> GetAsync(string chatId)
         {
-            return await collection.Find(c => c.Id == chatId).FirstAsync(); 
+            return await collection.Find(c => c.Id == chatId).FirstOrDefaultAsync(); 
         }
 
         public async Task<bool> ExistsAsync(string chatId)

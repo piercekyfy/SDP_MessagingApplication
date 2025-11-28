@@ -8,5 +8,6 @@ namespace UserService.Repository
         Task<User?> GetByUniqueNameAsync(string uniqueName);
         Task CreateAsync(User user);
         Task UpdateAsync(User user);
+        Task DeleteAsync(User user);
     }
 }

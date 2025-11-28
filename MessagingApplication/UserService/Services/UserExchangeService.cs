@@ -22,18 +22,25 @@ namespace UserService.Services
 
         }
 
-        public async Task PublishUserCreatedAsync(User user)
+        public async Task PublishCreatedAsync(User user)
         {
             await channel.DeclareExchange(exchange.Name, "topic");
 
             await channel.BasicPublish(exchange.Name, exchange.Events.Created.Route, new UserUpdated(user.UniqueName, user.DisplayName), exchange.Events.Created.Name);
         }
 
-        public async Task PublishUserUpdatedAsync(User user)
+        public async Task PublishUpdatedAsync(User user)
         {
             await channel.DeclareExchange(exchange.Name, "topic");
 
             await channel.BasicPublish(exchange.Name, exchange.Events.Updated.Route, new UserUpdated(user.UniqueName, user.DisplayName), exchange.Events.Updated.Name);
+        }
+
+        public async Task PublishDeletedAsync(User user)
+        {
+            await channel.DeclareExchange(exchange.Name, "topic");
+
+            await channel.BasicPublish(exchange.Name, exchange.Events.Deleted.Route, new UserDeleted(user.UniqueName, user.DeletedAt), exchange.Events.Deleted.Name);
         }
     }
 }

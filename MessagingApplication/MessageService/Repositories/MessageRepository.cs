@@ -41,10 +41,21 @@ namespace MessageService.Repositories
             return await collection.Find(m => m.ChatId == chatId).SortByDescending(m => m.Timestamp).ToListAsync();
         }
 
-        public async Task CreateAsync(Message message)
+        public async Task<List<Message>> GetManyAsync(IEnumerable<string> ids)
+        {
+            return await collection.Find(Builders<Message>.Filter.In(m => m.Id, ids)).ToListAsync();
+        }
+
+        public async Task<Message> GetAsync(string id)
+        {
+            return await collection.Find(m => m.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<Message> CreateAsync(Message message)
         {
             message.Timestamp = DateTime.UtcNow;
             await collection.InsertOneAsync(message);
+            return message;
         }
 
     }

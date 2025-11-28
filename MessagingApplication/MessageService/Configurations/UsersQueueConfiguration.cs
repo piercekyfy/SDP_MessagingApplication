@@ -4,6 +4,7 @@
     {
         public string Created { get; set; } = default!;
         public string Updated { get; set; } = default!;
+        public string Deleted { get; set; } = default!;
     }
 
     public class UsersQueueConfiguration

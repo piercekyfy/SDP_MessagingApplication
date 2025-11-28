@@ -1,10 +1,11 @@
-﻿using MessageService.Models;
+﻿using MessageService.DTOs;
+using MessageService.Models;
 
 namespace MessageService.Services
 {
     public interface IMessagesService
     {
-        public Task<List<Message>> GetAllByChatAsync(string chatId);
-        public Task SendAsync(Message message);
+        public Task<List<GetMessageResponse>> GetAllByChatAsync(string chatId);
+        public Task<Message> SendAsync(string chatId, SendMessageRequest request);
     }
 }

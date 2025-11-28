@@ -25,13 +25,21 @@ namespace UserService.Repository
 
         public async Task CreateAsync(User user)
         {
-            user.DateCreated = DateTime.UtcNow;
+            user.CreatedAt = DateTime.UtcNow;
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
         }
 
         public async Task UpdateAsync(User user)
         {
+            context.Users.Update(user);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(User user)
+        {
+            user.Deleted = true;
+            user.DeletedAt = DateTimeOffset.UtcNow;
             context.Users.Update(user);
             await context.SaveChangesAsync();
         }

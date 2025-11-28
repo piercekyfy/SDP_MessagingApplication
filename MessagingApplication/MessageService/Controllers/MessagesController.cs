@@ -22,7 +22,7 @@ namespace MessageService.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(string chatId)
         {
-            List<Message> messages;
+            List<GetMessageResponse> messages;
 
             try
             {
@@ -35,24 +35,23 @@ namespace MessageService.Controllers
                 return BadRequest();
             } catch (Exception)
             {
-                return StatusCode(500);
+                throw;
             }
 
             return Ok(messages);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOne([FromBody] CreateMessageRequest request)
+        public async Task<IActionResult> CreateOne(string chatId, [FromBody] SendMessageRequest request)
         {
-            Message message = new Message(request.SenderUniqueName, request.ChatId, request.Content);
-
+            Message result;
             try
             {
-                await service.SendAsync(message);
+                result = await service.SendAsync(chatId, request);
             }
             catch (ChatNotFoundException)
             {
-                return NotFound(message.ChatId);
+                return NotFound(chatId);
             }
             
             catch (InvalidChatUserException)
@@ -63,6 +62,10 @@ namespace MessageService.Controllers
             {
                 return Forbid();
             }
+            catch (InvalidMessageContentException ex)
+            {
+                return BadRequest(ex.DisplayMessage);
+            }
             catch (DomainException)
             {
                 return BadRequest();
@@ -72,7 +75,7 @@ namespace MessageService.Controllers
                 return StatusCode(500);
             }
 
-            return Ok(new MessageCreatedResponse(message.Id ?? "", message.Timestamp));
+            return Ok(new MessageCreatedResponse(result.Id ?? "", result.Timestamp));
         }
     }
 }

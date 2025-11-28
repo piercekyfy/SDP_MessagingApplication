@@ -6,6 +6,7 @@ namespace UserService.Configurations
     {
         public ExchangeEvent Created { get; set; } = default!;
         public ExchangeEvent Updated { get; set; } = default!;
+        public ExchangeEvent Deleted { get; set; } = default!;
     }
 
     public class UsersExchangeConfiguration

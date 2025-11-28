@@ -54,11 +54,30 @@ namespace UserService.Controllers
                 return BadRequest(ex.DisplayMessage);
             } catch (Exception)
             {
-                throw;
                 return StatusCode(500);
             }
 
             return Ok(updated);
+        }
+
+        [HttpDelete("{uniqueName}")]
+        public async Task<IActionResult> DeleteOne(string uniqueName)
+        {
+            try
+            {
+                await usersService.DeleteAsync(uniqueName);
+            } catch (UserNotFoundException)
+            {
+                return NotFound(uniqueName);
+            } catch (DomainException ex)
+            {
+                return BadRequest(ex.DisplayMessage);
+            } catch (Exception)
+            {
+                return StatusCode(500);
+            }
+
+            return Ok(uniqueName);
         }
     }
 }

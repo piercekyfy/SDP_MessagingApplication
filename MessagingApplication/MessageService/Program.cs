@@ -1,7 +1,8 @@
 using MessageService.Configurations;
-using MessageService.Messaging.Consumers;
 using MessageService.Repositories;
 using MessageService.Services;
+using MessageService.Services.Consumers;
+using MessageService.Services.Events;
 using Shared.Configurations;
 using Shared.Messaging.Infastructure;
 
@@ -30,6 +31,8 @@ builder.Services.AddScoped<IChatsService, ChatsService>();
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 
 // Exchange Services (Messaging)
+
+builder.Services.AddScoped<IUserEventHandler, UserEventHandler>();
 
 builder.Services.AddSingleton<IMessageBrokerConnection, RabbitMQConnection>();
 builder.Services.AddTransient<IMessageBrokerChannel, MessageBrokerChannel>();

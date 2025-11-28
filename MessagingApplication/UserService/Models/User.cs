@@ -15,14 +15,16 @@ namespace UserService.Models
         }
         public string DisplayName { get; set; }
         public string Email { get; set; }
-        public DateTimeOffset DateCreated { get; set; }
+        public bool Deleted { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
+        public DateTimeOffset DeletedAt { get; set; }
 
-        public User(string uniqueName, string displayName, string email, DateTimeOffset dateCreated)
+        public User(string uniqueName, string displayName, string email)
         {
             UniqueName = uniqueName;
             DisplayName = displayName;
             Email = email;
-            DateCreated = dateCreated;
+            Deleted = false;
         }
     }
 }

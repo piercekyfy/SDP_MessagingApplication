@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
+using RabbitMQ.Client.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Shared
@@ -35,6 +37,20 @@ namespace Shared
                 throw new ArgumentException($"Exchange Configuration {key} must be specified.");
             }
             return configuration[key] ?? "";
+        }
+
+        public static bool TryDeserialize<T>(BasicDeliverEventArgs args, out T obj)
+        {
+            obj = default!;
+            try
+            {
+                obj = JsonSerializer.Deserialize<T>(args.Body.Span) ?? default!;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            return obj != null;
         }
     }
 }
