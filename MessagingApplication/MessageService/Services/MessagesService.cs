@@ -1,4 +1,5 @@
-﻿using MessageService.DTOs;
+﻿using MessageService.Assemblers;
+using MessageService.DTOs;
 using MessageService.Exceptions;
 using MessageService.Models;
 using MessageService.Models.Builders;
@@ -30,53 +31,22 @@ namespace MessageService.Services
                 throw new ChatNotFoundException(chatId);
             
             var messages = await messageRepository.GetAllByChatAsync(chatId);
+            var relatedMessages = await messageRepository.GetManyAsync(messages.Where(m => m.QuotedId != null).Select(m => m.QuotedId!).Distinct());
+            var relatedChats = await chatRepository.GetManyAsync(relatedMessages.Select(m => m.ChatId).Append(chat.Id).Distinct());
 
-            var quotedMessages = await messageRepository.GetManyAsync(messages.Where(m => m.QuotedId != null).Select(m => m.QuotedId!).Distinct());
-
-            var relatedUsersIds =
+            var relatedUserIds =
                 messages.Select(m => m.SenderUniqueName)
                 .Concat(
-                    quotedMessages.Select(m => m.SenderUniqueName)
+                    relatedMessages.Select(m => m.SenderUniqueName)
                 ).Concat(
                     messages.SelectMany(m => m.Reactions.Values).SelectMany(r => r)
-                ).Where(s => !string.IsNullOrEmpty(s)).Distinct(); // There is a lot of merit to only fetching reaction details when they're inspected by the user.
+                ).Where(s => !string.IsNullOrEmpty(s)).Distinct();
 
-            var users = (await userRepository.GetManyAsync(relatedUsersIds)).ToDictionary(u => u.UniqueName);
-            var quotedMessagesDict = quotedMessages.ToDictionary(m => m.Id);
+            var relatedUsers = await userRepository.GetManyAsync(relatedUserIds);
 
-            List<GetMessageResponse> responses = new List<GetMessageResponse>();
+            var assembler = new GetMessageResponseAssembler();
 
-            foreach(Message message in messages)
-            {
-                users.TryGetValue(message.SenderUniqueName, out var user);
-                GetMessageResponse response = (user == null ? new GetMessageResponse(message, chat) : new GetMessageResponse(message, user, chat));
-
-                if (message.QuotedId != null && quotedMessagesDict.TryGetValue(message.QuotedId, out var quotedMessage))
-                {
-                    Chat quotedChat = await chatRepository.GetAsync(quotedMessage.ChatId);
-                    if(quotedChat != null)
-                    {
-                        users.TryGetValue(quotedMessage.SenderUniqueName, out var quotedUser);
-                        GetMessageResponse quotedResponse = (user == null ? new GetMessageResponse(quotedMessage, quotedChat) : new GetMessageResponse(quotedMessage, quotedUser, quotedChat));
-                        response.QuotedMessage = quotedResponse;
-                    }
-                }
-
-                foreach(KeyValuePair<string, List<string>> kvp in message.Reactions)
-                {
-                    List<GetMessageResponseUser> sources = new List<GetMessageResponseUser>();
-                    foreach (string uniqueName in kvp.Value)
-                        if (users.TryGetValue(uniqueName, out var source))
-                            sources.Add(new GetMessageResponseUser(source.UniqueName, source.DisplayName));
-                    response.Reactions.Add(kvp.Key, sources);
-                }
-
-                response.ImageUrls = message.ImageUrls;
-
-                responses.Add(response);
-            }
-
-            return responses;
+            return assembler.AssembleMany(messages, relatedChats, relatedUsers, relatedMessages);
         }
 
         public async Task<Message> SendAsync(string chatId, SendMessageRequest request)
@@ -125,11 +95,11 @@ namespace MessageService.Services
                 builder.Quote(request.QuotedId);
             }
 
-            foreach(string imageUrl in request.ImageUrls)
+            using var client = new HttpClient();
+            foreach (string imageUrl in request.ImageUrls)
             {
                 try
                 {
-                    using var client = new HttpClient();
                     var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, imageUrl));
                     if (response.Content == null || response.Content.Headers == null || response.Content.Headers.ContentType == null || response.Content.Headers.ContentType.MediaType == null
                         || !response.IsSuccessStatusCode || !response.Content.Headers.ContentType.MediaType.StartsWith("image"))

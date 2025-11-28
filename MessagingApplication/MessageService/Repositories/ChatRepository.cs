@@ -35,6 +35,11 @@ namespace MessageService.Repositories
             return await collection.Find(_ => true).ToListAsync();
         }
 
+        public async Task<List<Chat>> GetManyAsync(IEnumerable<string> ids)
+        {
+            return await collection.Find(Builders<Chat>.Filter.In(c => c.Id, ids)).ToListAsync();
+        }
+
         public async Task<Chat> GetAsync(string chatId)
         {
             return await collection.Find(c => c.Id == chatId).FirstOrDefaultAsync(); 
