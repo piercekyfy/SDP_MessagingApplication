@@ -5,7 +5,8 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "user-service": "StartDebugging",
-        "message-service": "StartDebugging"
+        "message-service": "StartDebugging",
+        "chat-service":  "StartDebugging"
       }
     }
   }

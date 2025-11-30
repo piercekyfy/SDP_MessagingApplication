@@ -10,12 +10,22 @@ services:
   user-db:
     image: postgres:18.0-alpine3.22
     container_name: "user-users-db"
-    ports:
-        - 5432:5432
     volumes:
         - user-db-data:/var/lib/postgresql
     environment:
         POSTGRES_DB: users
+  chat-service:
+    image: ${DOCKER_REGISTRY-}chatservice
+    build:
+      context: .
+      dockerfile: MessagingApplication/ChatService/Dockerfile
+  chat-db:
+    image: postgres:18.0-alpine3.22
+    container_name: "chat-chats-db"
+    volumes:
+        - chat-db-data:/var/lib/postgresql
+    environment:
+        POSTGRES_DB: chats
   message-service:
     image: ${DOCKER_REGISTRY-}messageservice
     build:
@@ -27,8 +37,6 @@ services:
   message-db:
     image: mongo:8.0-noble
     container_name: "message-messages-db"
-    ports:
-        - 27017:27017
     volumes:
         - message-db-data:/data/db
   rabbitmq:
@@ -42,7 +50,8 @@ services:
         - rabbitmq-log-data:/var/log/rabbitmq/
 
 volumes:
-    message-db-data:
     user-db-data:
+    chat-db-data:
+    message-db-data:
     rabbitmq-lib-data:
     rabbitmq-log-data:

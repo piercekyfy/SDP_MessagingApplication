@@ -1,1 +1,1 @@
-cat "$PSScriptRoot/Users.sql" | docker exec -i user-users-db psql -U admin -d users 
+cat "$PSScriptRoot/users.sql" | docker exec -i user-users-db psql -U admin -d users 
