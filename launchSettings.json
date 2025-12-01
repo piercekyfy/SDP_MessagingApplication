@@ -4,9 +4,10 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
+        "gateway-service": "StartDebugging",
         "user-service": "StartDebugging",
         "message-service": "StartDebugging",
-        "chat-service":  "StartDebugging"
+        "chat-service": "StartDebugging"
       }
     }
   }

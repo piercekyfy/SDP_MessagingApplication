@@ -13,6 +13,8 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatService", "MessagingApplication\ChatService\ChatService.csproj", "{3DA7012A-7AB9-47CB-8936-19AE6E1F7521}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayService", "MessagingApplication\GatewayService\GatewayService.csproj", "{8249DEE6-BE5F-4921-A416-672AE7F2E9FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{3DA7012A-7AB9-47CB-8936-19AE6E1F7521}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DA7012A-7AB9-47CB-8936-19AE6E1F7521}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DA7012A-7AB9-47CB-8936-19AE6E1F7521}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8249DEE6-BE5F-4921-A416-672AE7F2E9FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8249DEE6-BE5F-4921-A416-672AE7F2E9FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8249DEE6-BE5F-4921-A416-672AE7F2E9FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8249DEE6-BE5F-4921-A416-672AE7F2E9FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

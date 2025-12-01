@@ -1,4 +1,9 @@
 services:
+  gateway-service:
+    image: ${DOCKER_REGISTRY-}gatewayservice
+    build:
+      context: .
+      dockerfile: MessagingApplication/GatewayService/Dockerfile
   user-service:
     image: ${DOCKER_REGISTRY-}userservice
     build:

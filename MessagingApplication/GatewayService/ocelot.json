@@ -1,0 +1,42 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/v1/chats/{chatId}/messages/{everything}",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "message-service",
+          "Port": 5003
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/chats/{chatId}/messages/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/chats/{everything}",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chat-service",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/chats/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v1/users/{everything}",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service",
+          "Port": 5001
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v1/users/{everything}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE" ]
+    }
+
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5000",
+    "DownstreamScheme": "http"
+  }
+}
