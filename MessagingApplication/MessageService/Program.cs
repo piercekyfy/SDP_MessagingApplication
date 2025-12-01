@@ -1,42 +1,69 @@
+using MessageService.Chat.Consumers;
+using MessageService.Chat.Observers;
+using MessageService.Chat.Repositories;
 using MessageService.Configurations;
-using MessageService.Repositories;
-using MessageService.Services;
-using MessageService.Services.Consumers;
-using MessageService.Services.Events;
+using MessageService.Message.Commands;
+using MessageService.Message.Queries;
+using MessageService.Message.Repositories;
+using MessageService.User.Consumers;
+using MessageService.User.Observers;
+using MessageService.User.Repositories;
 using Shared.Configurations;
-using Shared.Messaging.Infastructure;
+using Shared.Middleware.CQRS;
+using Shared.Middleware.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Register Configurations
-
-builder.Services.Configure<MongoDBConfiguration>(builder.Configuration.GetSection("MongoDB"));
-builder.Services.Configure<RabbitMQConfiguration>(builder.Configuration.GetSection("RabbitMQ"));
-builder.Services.Configure<UsersQueueConfiguration>(builder.Configuration.GetSection("Queues:Users"));
-
-
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSingleton<IMessageRepository, MessageRepository>();
-builder.Services.AddScoped<IMessagesService, MessagesService>();
+// Configurations
 
-builder.Services.AddSingleton<IChatRepository, ChatRepository>();
-builder.Services.AddScoped<IChatsService, ChatsService>();
+builder.Services.Configure<MongoDBConfiguration>(builder.Configuration.GetSection("MongoDB"));
+builder.Services.Configure<RabbitMQConfiguration>(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.Configure<ChatQueueConfiguration>(builder.Configuration.GetSection("Queues:Chats"));
+builder.Services.Configure<UserQueueConfiguration>(builder.Configuration.GetSection("Queues:Users"));
 
-builder.Services.AddSingleton<IUserRepository, UserRepository>();
+// Repository Services (Data-stores)
 
-// Exchange Services (Messaging)
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-builder.Services.AddScoped<IUserEventHandler, UserEventHandler>();
+// Messaging Services
 
 builder.Services.AddSingleton<IMessageBrokerConnection, RabbitMQConnection>();
 builder.Services.AddTransient<IMessageBrokerChannel, MessageBrokerChannel>();
-builder.Services.AddHostedService<UsersConsumer>();
+
+// builder.Services.AddTransient<>(); TODO: Publish Message Events
+
+builder.Services.AddTransient<ChatEventHandler>();
+builder.Services.AddHostedService<ChatEventConsumer>();
+
+builder.Services.AddTransient<UserEventHandler>();
+builder.Services.AddHostedService<UserEventConsumer>();
+
+// Register Command & Query Handlers
+
+builder.Services.Scan(scan =>
+    scan
+    .FromAssemblyOf<SendMessageCommand>() // Any command to find common assembly
+    .AddClasses(c => c.AssignableTo(typeof(ICommandHandler<,>)))
+    .AsImplementedInterfaces()
+    .WithTransientLifetime()
+);
+
+builder.Services.AddScoped<ICommandDispatcher, CommandDispatcher>();
+
+builder.Services.Scan(scan =>
+    scan
+    .FromAssemblyOf<GetAllMessagesByChatQuery>() // Any query to find common assembly
+    .AddClasses(c => c.AssignableTo(typeof(IQueryHandler<,>)))
+    .AsImplementedInterfaces()
+    .WithTransientLifetime()
+);
+
+builder.Services.AddScoped<IQueryDispatcher, QueryDispatcher>();
 
 var app = builder.Build();
 
@@ -47,8 +74,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthorization();
 
 app.MapControllers();
 app.MapGet("/", () => $"{DateTime.UtcNow}: Message Service is running.");
+
 
 app.Run();

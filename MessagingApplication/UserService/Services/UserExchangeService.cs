@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 
 using UserService.Models;
-using Shared.Messaging.Infastructure;
 using Shared.Messaging.Models.User;
 using System.Text;
 using UserService.Configurations;
 using Microsoft.Extensions.Options;
+using Shared.Middleware.Messaging;
 
 
 namespace UserService.Services

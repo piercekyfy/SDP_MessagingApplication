@@ -1,5 +1,5 @@
 using Shared.Configurations;
-using Shared.Messaging.Infastructure;
+using Shared.Middleware.Messaging;
 using UserService.Configurations;
 using UserService.Contexts;
 using UserService.Repository;
